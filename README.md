@@ -1,2 +1,2 @@
-# hlx-assets-addon-config-
+# hlx-assets-addon-config
 Sample config provider endpoint for Helix Assets Addon
