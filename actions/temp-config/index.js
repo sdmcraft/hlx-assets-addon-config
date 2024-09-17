@@ -31,6 +31,10 @@ const AS_CONFIG = {
       {
         "mimeType": "video/*",
         "value": "<table border='1' style=\"width:100%\">\n  <tr>\n        <td style=\"background-color:#f5680a;color:#fff\">${blockName}</td>\n      </tr>\n      <tr>\n        <td>\n        <img src=\"${posterUrl}\" alt=\"${name}\">\n        <br/>\n        <a href=\"${videoUrl}\">${name}</a>\n        </td>\n      </tr>   </table>"
+      },
+      {
+        "mimeType": "image/*",
+        "value": "<a href=\"${deliveryUrl}\"><img src=\"${deliveryUrl}\" alt=\"${alt}\"/></a>"
       }
     ],
     "filterSchema": [
