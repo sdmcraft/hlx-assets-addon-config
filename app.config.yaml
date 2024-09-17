@@ -16,6 +16,14 @@ application:
               LOG_LEVEL: debug
             annotations:
               require-adobe-auth: false
+          temp-config:
+            function: actions/temp-config/index.js
+            web: 'yes'
+            runtime: nodejs:18
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false
               final: true
           publish-events:
             function: actions/publish-events/index.js
