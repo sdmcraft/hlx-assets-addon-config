@@ -106,7 +106,7 @@ const AS_CONFIG = {
       fields: [
         {
           element: 'radiogroup',
-          name: 'assetStatus',
+          name: 'property=dam:assetStatus=',
           defaultValue: ['all'],
           excludeTags: ['all'],
           orientation: 'vertical',
