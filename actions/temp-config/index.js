@@ -103,37 +103,6 @@ const AS_CONFIG = {
       "groupKey": "ExpirationGroup"
     },
     {
-      fields: [
-        {
-          element: 'radiogroup',
-          name: 'property=dam:assetStatus=',
-          defaultValue: ['all'],
-          excludeTags: ['all'],
-          orientation: 'vertical',
-          options: [
-            {
-              label: 'All',
-              value: 'all',
-            },
-            {
-              label: 'Approved',
-              value: 'approved',
-            },
-            {
-              label: 'Rejected',
-              value: 'rejected',
-            },
-            {
-              label: 'None',
-              value: 'null',
-            },
-          ],
-        },
-      ],
-      header: 'Status',
-      groupKey: 'AssetStatusGroup',
-    },
-    {
       "fields": [
         {
           "element": "drop-down",

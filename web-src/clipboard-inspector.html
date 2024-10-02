@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clipboard Inspector</title>
+    <style>
+        body {
+            margin: 0; /* Remove default body margins */
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .container {
+            display: flex; /* Use Flexbox to create the side-by-side layout */
+            height: 100vh; /* Set container height to full viewport height */
+            width: 100vw; /* Set container width to full viewport width */
+        }
+
+        #editor, #htmlContent {
+            flex: 1; /* Each will take up equal width (50%) */
+            padding: 10px;
+            box-sizing: border-box; /* Ensure padding does not exceed the element size */
+        }
+
+        #editor {
+            border: 1px solid #ccc;
+            white-space: pre-wrap; /* Preserve formatting of text */
+            max-height: 100%; /* Ensure full height usage */
+            overflow: auto; /* Enable scrolling */
+        }
+
+        #editor img {
+            max-width: 100%; /* Ensure images don’t overflow the width of the editor */
+            height: auto; /* Maintain aspect ratio of images */
+        }
+
+        #htmlContent {
+            height: 100%; /* Match height of the editor */
+            resize: none; /* Disable resizing of the textarea */
+        }
+
+        .clear-btn {
+            margin: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h3>Paste your clipboard contents below:</h3>
+<button class="clear-btn" id="clearButton">Clear</button>
+<div class="container">
+    <div id="editor" contenteditable="true"></div>
+
+    <textarea id="htmlContent" readonly></textarea>
+</div>
+
+<script>
+    document.getElementById('editor').focus();
+
+    // Use clipboard API to listen to a paste event and inspect the content
+    document.getElementById('editor').addEventListener('paste', (event) => {
+        event.preventDefault();  // Prevent default paste behavior
+
+        navigator.clipboard.read().then(data => {
+            // Loop through clipboard items and check if it contains HTML
+            for (let item of data) {
+                if (item.types.includes('text/html')) {
+                    item.getType('text/html').then(blob => {
+                        blob.text().then(html => {
+                            console.log('Rich Text HTML:', html);  // Inspect HTML in console
+                            document.getElementById('editor').innerHTML = html;  // Paste the rich text
+                            document.getElementById('htmlContent').value = html;  // Show the raw HTML in the textarea
+                        });
+                    });
+                }
+            }
+        }).catch(err => {
+            console.error('Failed to read clipboard contents:', err);
+        });
+    });
+
+    // Clear the contents of the editor and textarea
+    document.getElementById('clearButton').addEventListener('click', () => {
+        document.getElementById('editor').innerHTML = '';
+        document.getElementById('htmlContent').value = '';
+    });
+</script>
+
+</body>
+</html>
