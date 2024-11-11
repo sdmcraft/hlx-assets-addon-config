@@ -16,6 +16,16 @@ application:
               LOG_LEVEL: debug
             annotations:
               require-adobe-auth: false
+          ue-extn-config:
+            include:
+              - ["node_modules/@minimatch"]
+            function: actions/ue-extn-config/index.js
+            web: 'yes'
+            runtime: nodejs:18
+            inputs:
+              LOG_LEVEL: debug
+            annotations:
+              require-adobe-auth: false
           temp-config:
             function: actions/temp-config/index.js
             web: 'yes'
