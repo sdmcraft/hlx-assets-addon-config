@@ -129,3 +129,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 .aws.tmp.creds.json
+.DS_Store
