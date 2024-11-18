@@ -1,31 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Video Comparison</title>
-    <link rel="stylesheet" href="video-compare.css" />
-    <script src="https://vjs.zencdn.net/8.19.1/video.js"></script>
-    <link href="https://vjs.zencdn.net/8.19.1/video-js.css" rel="stylesheet" />
-    <script src="src/video-compare.js"></script>
-  </head>
-  <body>
-    <div class="container">
-      <div class="controls">
-        <div>
-            <input type="text" id="manifestUrl" value="Enter Manifest URL" />
-            <input type="text" id="mp4Url" placeholder="Enter MP4 URL" />
-        </div>
-        <button id="playButton">Play Videos</button>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Comparison</title>
+  <link rel="stylesheet" href="video-compare.css" />
+  <script src="https://vjs.zencdn.net/8.19.1/video.js"></script>
+  <link href="https://vjs.zencdn.net/8.19.1/video-js.css" rel="stylesheet" />
+  <script src="src/video-compare.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="controls">
+      <div>
+        <input type="text" id="manifestUrl" value="Enter Manifest URL" />
+        <input type="text" id="mp4Url" placeholder="Enter MP4 URL" />
       </div>
-      <div class="video-container">
-        <div class="panel" id="manifestPlayerPanel">
-            <h2>Adaptive Bit Rate Player Panel</h2>
-        </div>
-        <div class="panel" id="progressivePlayerPanel">
-            <h2>Progressive Player Panel</h2>
-        </div>
+      <div>
+        <label for="playerType">Select Player Type</label>
+        <select id="playerType">
+          <option value="dash">DASH</option>
+          <option value="video-js">Video-js</option>
+        </select>
+      </div>
+      <button id="playButton">Play Videos</button>
+    </div>
+    <div class="video-container">
+      <div class="panel" id="manifestPlayerPanel">
+        <h2>Adaptive Bit Rate Player Panel</h2>
+      </div>
+      <div class="panel" id="progressivePlayerPanel">
+        <h2>Progressive Player Panel</h2>
       </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
