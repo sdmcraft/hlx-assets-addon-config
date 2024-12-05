@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PSNR Calculator with OpenCV</title>
+  <script async src="https://docs.opencv.org/4.x/opencv.js" onload="cv['onRuntimeInitialized']=onOpenCvReady"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .column {
+      border: 1px solid #ccc;
+      padding: 20px;
+      text-align: center;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px;
+    }
+    .result {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>PSNR Calculator with OpenCV</h1>
+  <form id="psnr-form">
+    <div class="container">
+      <div class="column">
+        <h3>Original Image</h3>
+        <input type="url" id="original-url" placeholder="Enter Original Image URL" required>
+        <img id="original-image" alt="Original Image will appear here">
+        <div class="result" id="psnr-original">PSNR: N/A</div>
+        <div class="result" id="size-original">Size: N/A</div>
+      </div>
+      <div class="column">
+        <h3>Option 1</h3>
+        <input type="url" id="option1-url" placeholder="Enter Option 1 Image URL" required>
+        <img id="option1-image" alt="Option 1 Image will appear here">
+        <div class="result" id="psnr-option1">PSNR: N/A</div>
+        <div class="result" id="size-option1">Size: N/A</div>
+      </div>
+      <div class="column">
+        <h3>Option 2</h3>
+        <input type="url" id="option2-url" placeholder="Enter Option 2 Image URL" required>
+        <img id="option2-image" alt="Option 2 Image will appear here">
+        <div class="result" id="psnr-option2">PSNR: N/A</div>
+        <div class="result" id="size-option2">Size: N/A</div>
+      </div>
+    </div>
+    <button type="submit">Calculate PSNR</button>
+  </form>
+
+  <script>
+    function onOpenCvReady() {
+      console.log('OpenCV.js is ready');
+    }
+
+    // Function to extract query parameters
+    function getQueryParameter(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    async function loadImageToMat(url) {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const img = new Image();
+      const bitmap = await createImageBitmap(blob);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      const mat = cv.matFromImageData(imgData);
+      return { mat, size: blob.size }; // return both mat and image size
+    }
+
+    function calculatePSNR(mat1, mat2) {
+      if (mat1.size().width !== mat2.size().width || mat1.size().height !== mat2.size().height) {
+        throw new Error("Images must have the same dimensions to calculate PSNR.");
+      }
+
+      const s1 = new cv.Mat();
+      cv.absdiff(mat1, mat2, s1); // Absolute difference
+      cv.pow(s1, 2, s1); // Square the differences
+
+      const mse = cv.mean(s1); // Mean squared error
+      const mseVal = mse[0] + mse[1] + mse[2] + mse[3]; // Sum all color channels
+      s1.delete();
+
+      if (mseVal === 0) return Infinity;
+
+      const psnr = 20 * Math.log10(255 / Math.sqrt(mseVal / (mat1.rows * mat1.cols)));
+      return psnr;
+    }
+
+    function clearPreviousData() {
+      document.getElementById('original-image').src = '';
+      document.getElementById('option1-image').src = '';
+      document.getElementById('option2-image').src = '';
+
+      document.getElementById('psnr-original').innerText = 'PSNR: N/A';
+      document.getElementById('psnr-option1').innerText = 'PSNR: N/A';
+      document.getElementById('psnr-option2').innerText = 'PSNR: N/A';
+
+      document.getElementById('size-original').innerText = 'Size: N/A';
+      document.getElementById('size-option1').innerText = 'Size: N/A';
+      document.getElementById('size-option2').innerText = 'Size: N/A';
+    }
+
+    async function loadImagesFromQueryParams() {
+      const originalUrl = getQueryParameter('original');
+      const option1Url = getQueryParameter('option1');
+      const option2Url = getQueryParameter('option2');
+
+      if (originalUrl) document.getElementById('original-url').value = originalUrl;
+      if (option1Url) document.getElementById('option1-url').value = option1Url;
+      if (option2Url) document.getElementById('option2-url').value = option2Url;
+
+      if (originalUrl && option1Url && option2Url) {
+        document.querySelector('button').disabled = true;
+        await calculateAndDisplayPSNR(originalUrl, option1Url, option2Url);
+      }
+    }
+
+    async function calculateAndDisplayPSNR(originalUrl, option1Url, option2Url) {
+      try {
+        const { mat: originalMat, size: originalSize } = await loadImageToMat(originalUrl);
+        const { mat: option1Mat, size: option1Size } = await loadImageToMat(option1Url);
+        const { mat: option2Mat, size: option2Size } = await loadImageToMat(option2Url);
+
+        const psnr1 = calculatePSNR(originalMat, option1Mat);
+        const psnr2 = calculatePSNR(originalMat, option2Mat);
+
+        document.getElementById('psnr-option1').innerText = `PSNR: ${psnr1.toFixed(2)} dB`;
+        document.getElementById('psnr-option2').innerText = `PSNR: ${psnr2.toFixed(2)} dB`;
+
+        document.getElementById('size-original').innerText = `Size: ${(originalSize / 1024).toFixed(2)} KB`;
+        document.getElementById('size-option1').innerText = `Size: ${(option1Size / 1024).toFixed(2)} KB`;
+        document.getElementById('size-option2').innerText = `Size: ${(option2Size / 1024).toFixed(2)} KB`;
+
+        originalMat.delete();
+        option1Mat.delete();
+        option2Mat.delete();
+      } catch (err) {
+        console.error('Error calculating PSNR:', err);
+        alert('Error calculating PSNR. Check console for details.');
+      } finally {
+        document.querySelector('button').disabled = false;
+      }
+    }
+
+    document.getElementById('psnr-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      clearPreviousData();
+
+      const originalUrl = document.getElementById('original-url').value;
+      const option1Url = document.getElementById('option1-url').value;
+      const option2Url = document.getElementById('option2-url').value;
+
+      // Set images based on URLs
+      document.getElementById('original-image').src = originalUrl;
+      document.getElementById('option1-image').src = option1Url;
+      document.getElementById('option2-image').src = option2Url;
+
+      document.querySelector('button').disabled = true;
+
+      await calculateAndDisplayPSNR(originalUrl, option1Url, option2Url);
+    });
+
+    window.onload = loadImagesFromQueryParams;
+  </script>
+</body>
+</html>
