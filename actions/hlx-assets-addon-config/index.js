@@ -67,6 +67,31 @@ const AS_CONFIG = {
       ]
     },
     {
+      "header": "Approval Status",
+      "groupKey": "ApprovalStatusGroup",
+      "fields": [
+        {
+          "element": "checkbox",
+          "name": 'dam:assetStatus',
+          "defaultValue": [
+            "approved"
+          ],
+          "options": [
+            {
+              "label": "Approved",
+              "value": "approved"
+            },
+            {
+              "label": "Not Approved",
+              "value": "notApproved"
+            }
+          ],
+          "orientation": "horizontal",
+          "columns": 2
+        }
+      ]
+    },
+    {
       "header": "Assets Tags",
       "groupKey": "AssetTagsGroup",
       "fields": [
