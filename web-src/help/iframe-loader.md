@@ -3,7 +3,10 @@
 ## Overview
 The Dynamic Iframe Loader is a web application that allows users to add multiple iframes dynamically, specify headers and URLs for each iframe, and load all iframes simultaneously. The iframes are displayed in a responsive layout, with a maximum of 4 iframes per row.
 
-[📺 Watch Demo Video](iframe-loader.mp4)
+<video width="100%" controls>
+  <source src="iframe-loader.mp4" type="video/mp4">
+  Your browser does not support the video tag. <a href="iframe-loader.mp4">Download the video</a> instead.
+</video>
 
 ## Features
 - Add multiple iframes dynamically.
