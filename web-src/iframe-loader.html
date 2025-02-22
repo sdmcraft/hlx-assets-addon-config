@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Iframe Loader</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+        }
+        .container {
+            padding: 10px;
+        }
+        .iframe-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            flex-grow: 1;
+            overflow: auto;
+        }
+        .iframe-wrapper {
+            flex: 1 1 calc(25% - 20px); /* Up to 4 iframes per row */
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        iframe {
+            width: 100%;
+            flex-grow: 1;
+            border: 1px solid #ccc;
+        }
+        .iframe-header, .iframe-url {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+        .iframe-header {
+            margin-bottom: 2px;
+        }
+        .iframe-url {
+            margin-bottom: 5px;
+        }
+        .iframe-row {
+            display: flex;
+            width: 100%;
+            height: calc(100% / var(--row-count)); /* Adjust height dynamically */
+        }
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 2px 5px;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button onclick="addIframe()">➕ Add Iframe</button>
+        <button onclick="loadIframes()">Load</button>
+    </div>
+    <div id="iframe-list" class="iframe-container"></div>
+
+    <script>
+        function adjustRowHeight() {
+            const container = document.getElementById('iframe-list');
+            const totalIframes = container.children.length;
+            const rows = Math.ceil(totalIframes / 4); // Max 4 iframes per row
+            document.documentElement.style.setProperty('--row-count', rows || 1);
+        }
+
+        function addIframe() {
+            const container = document.getElementById('iframe-list');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'iframe-wrapper';
+            wrapper.innerHTML = `
+                <button class="remove-btn" onclick="removeIframe(this)">✖</button>
+                <input type="text" placeholder="Enter Header" class="iframe-header">
+                <input type="text" placeholder="Enter URL" class="iframe-url">
+                <iframe></iframe>
+            `;
+            container.appendChild(wrapper);
+            adjustRowHeight();
+        }
+
+        function removeIframe(button) {
+            const wrapper = button.parentElement;
+            wrapper.remove();
+            adjustRowHeight();
+        }
+
+        function loadIframes() {
+            document.querySelectorAll('.iframe-wrapper').forEach(wrapper => {
+                const url = wrapper.querySelector('.iframe-url').value;
+                wrapper.querySelector('iframe').src = url;
+            });
+        }
+
+        // Initialize with 2 iframes
+        addIframe();
+        addIframe();
+    </script>
+</body>
+</html>
